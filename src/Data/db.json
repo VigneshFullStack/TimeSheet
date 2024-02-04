@@ -1,0 +1,114 @@
+{
+    "employeeTasks": [
+        {
+            "id": 1,
+            "employeeId": 1,
+            "employeeEmail": "john.doe@example.com",
+            "department": "IT",
+            "date": "2024-02-01T00:00:00.000Z",
+            "task": "Bug Fixing",
+            "toolOrProject": "React App",
+            "ticketId": "BUG-123",
+            "hoursSpent": 3.5
+        },
+        {
+            "id": 2,
+            "employeeId": 2,
+            "employeeEmail": "jane.smith@example.com",
+            "department": "HR",
+            "date": "2024-02-02T00:00:00.000Z",
+            "task": "Interviews",
+            "toolOrProject": "Hiring Process",
+            "ticketId": "HR-567",
+            "hoursSpent": 5
+        },
+        {
+            "id": 3,
+            "employeeId": 3,
+            "employeeEmail": "alice.jones@example.com",
+            "department": "Marketing",
+            "date": "2024-02-03T00:00:00.000Z",
+            "task": "Social Media Campaign",
+            "toolOrProject": "Marketing Tools",
+            "ticketId": "SOCIAL-789",
+            "hoursSpent": 4
+        },
+        {
+            "id": 4,
+            "employeeId": 4,
+            "employeeEmail": "bob.roberts@example.com",
+            "department": "Finance",
+            "date": "2024-02-04T00:00:00.000Z",
+            "task": "Budget Planning",
+            "toolOrProject": "Financial Software",
+            "ticketId": "FIN-456",
+            "hoursSpent": 6.5
+        },
+        {
+            "id": 5,
+            "employeeId": 5,
+            "employeeEmail": "sam.jackson@example.com",
+            "department": "IT",
+            "date": "2024-02-05T00:00:00.000Z",
+            "task": "Feature Development",
+            "toolOrProject": "Web Application",
+            "ticketId": "FEATURE-789",
+            "hoursSpent": 8
+        },
+        {
+            "id": 6,
+            "employeeId": 6,
+            "employeeEmail": "lisa.anderson@example.com",
+            "department": "HR",
+            "date": "2024-02-06T00:00:00.000Z",
+            "task": "Employee Onboarding",
+            "toolOrProject": "HR System",
+            "ticketId": "ONBOARD-123",
+            "hoursSpent": 4
+        },
+        {
+            "id": 7,
+            "employeeId": 7,
+            "employeeEmail": "tom.wilson@example.com",
+            "department": "Marketing",
+            "date": "2024-02-07T00:00:00.000Z",
+            "task": "Product Launch Campaign",
+            "toolOrProject": "Marketing Tools",
+            "ticketId": "LAUNCH-456",
+            "hoursSpent": 7
+        },
+        {
+            "id": 8,
+            "employeeId": 8,
+            "employeeEmail": "emily.hall@example.com",
+            "department": "Finance",
+            "date": "2024-02-08T00:00:00.000Z",
+            "task": "Expense Reports",
+            "toolOrProject": "Financial Software",
+            "ticketId": "EXPENSE-789",
+            "hoursSpent": 3
+        },
+        {
+            "id": 9,
+            "employeeId": 9,
+            "employeeEmail": "michael.chen@example.com",
+            "department": "IT",
+            "date": "2024-02-09T00:00:00.000Z",
+            "task": "Code Review",
+            "toolOrProject": "Development",
+            "ticketId": "CODE-123",
+            "hoursSpent": 2.5
+        },
+        {
+            "id": 10,
+            "employeeId": 10,
+            "employeeEmail": "sarah.smith@example.com",
+            "department": "Marketing",
+            "date": "2024-02-10T00:00:00.000Z",
+            "task": "Social Media Analytics",
+            "toolOrProject": "Marketing Tools",
+            "ticketId": "ANALYTICS-456",
+            "hoursSpent": 5
+        }
+    ]
+}
