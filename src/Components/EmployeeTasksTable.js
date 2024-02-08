@@ -199,7 +199,7 @@ const EmployeeTasksTable = () => {
                             ) : column.id === "action" ? (
                               <div>
                                 <Stack direction="row" alignItems="center" spacing={1}>
-                                  <IconButton aria-label="edit" style={{ color: '#4d94ff' }} size="small" onClick={() => handleDelete(task.id)}>
+                                  <IconButton aria-label="edit" style={{ color: '#4d94ff' }} size="small" onClick={() => handleEdit(task)}>
                                     <EditIcon fontSize="small" />
                                   </IconButton>
                                   <IconButton aria-label="delete" style={{ color: '#ff3333' }} size="small" onClick={() => handleDelete(task.id)}>
