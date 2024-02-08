@@ -15,6 +15,10 @@
   /* background-image: url(./bg.jpg); */
 }
 
+.MuiFormControl-root {
+  width: 100% !important;
+}
+
 .p-button.p-button-icon-only.p-button-rounded,
 .p-paginator-element {
   border-radius: 50% !important;
