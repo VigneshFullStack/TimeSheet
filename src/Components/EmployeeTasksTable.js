@@ -20,11 +20,9 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { toast } from 'react-toastify';
 import { CreateTask, GetAllTasks } from "../Redux/ActionCreater";
 import { connect, useDispatch } from "react-redux";
 import { OpenPopup } from "../Redux/Action";
-
 
 const EmployeeTasksTable = (props) => {
 
@@ -167,19 +165,6 @@ const EmployeeTasksTable = (props) => {
         <div style={{ margin: "1%" }}>
           <TableContainer>
             <Table>
-              {/* <TableHead>
-                <TableRow style={{ backgroundColor: "midnightblue" }}>
-                  {columns.map(
-                    (column) =>
-                      // Check if the column id is not 'id' before rendering
-                      column.id !== "id" && (
-                        <TableCell key={column.id} style={{ color: "white" }}>
-                          {column.name}
-                        </TableCell>
-                      )
-                  )}
-                </TableRow>
-              </TableHead> */}
               <TableHead>
                 <TableRow style={{ backgroundColor: "midnightblue", color: "white" }}>
                   <TableCell style={{ color: "white", textAlign: "center" }}>EmployeeId</TableCell>
@@ -194,36 +179,6 @@ const EmployeeTasksTable = (props) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {/* {tasks.map((task) => (
-                  <TableRow key={task.id}>
-                    {columns.map((column) => {
-                      if (column.id !== "id") {
-                        return (
-                          <TableCell key={column.id}>
-                            {column.id === "date" ? (
-                              formatDate(task[column.id])
-                            ) : column.id === "action" ? (
-                              <div>
-                                <Stack direction="row" alignItems="center" spacing={1}>
-                                  <IconButton aria-label="edit" style={{ color: '#4d94ff' }} size="small" onClick={() => handleEdit(task)}>
-                                    <EditIcon fontSize="small" />
-                                  </IconButton>
-                                  <IconButton aria-label="delete" style={{ color: '#ff3333' }} size="small" onClick={() => handleDelete(task.id)}>
-                                    <DeleteIcon fontSize="small" />
-                                  </IconButton>
-                                </Stack>
-                              </div>
-                            ) : (
-                              task[column.id]
-                            )}
-                          </TableCell>
-                        );
-                      }
-                      return null;
-                    })}
-                  </TableRow>
-                ))} */}
-
                 {props.taskState.taskList &&
                   props.taskState.taskList
                     .slice(page * rowperpage, page * rowperpage + rowperpage)
