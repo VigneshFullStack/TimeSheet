@@ -19,6 +19,10 @@
   width: 100% !important;
 }
 
+.css-kdc3n8-MuiStack-root {
+  justify-content: center;
+}
+
 .p-button.p-button-icon-only.p-button-rounded,
 .p-paginator-element {
   border-radius: 50% !important;

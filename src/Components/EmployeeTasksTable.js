@@ -11,7 +11,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Stack, TextField } from "@mui/material";
+import { Stack, TablePagination, TextField } from "@mui/material";
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -21,30 +21,18 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { toast } from 'react-toastify';
+import { CreateTask, GetAllTasks } from "../Redux/ActionCreater";
+import { connect, useDispatch } from "react-redux";
+import { OpenPopup } from "../Redux/Action";
 
 
-const EmployeeTasksTable = () => {
-  const columns = [
-    { id: "id", name: "Id" },
-    { id: "employeeId", name: "employeeId" },
-    { id: "employeeEmail", name: "Email" },
-    { id: "department", name: "Department" },
-    { id: "date", name: "Date" },
-    { id: "task", name: "Task" },
-    { id: "toolOrProject", name: "Tool/Project" },
-    { id: "ticketId", name: "TicketId" },
-    { id: "hoursSpent", name: "HoursSpent" },
-    { id: "action", name: "Action" },
-  ];
+const EmployeeTasksTable = (props) => {
 
-  const [open, setOpen] = useState(false);
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [tasks, setTasks] = useState([]);
-  const [deleteTaskId, setDeleteTaskId] = useState(null);
+  const dispatch = useDispatch();
 
   // State variables for each property
-  const [id, setId] = useState("");
-  const [employeeId, setEmployeeId] = useState("");
+  const [id, setId] = useState(0);
+  const [employeeId, setEmployeeId] = useState(0);
   const [employeeEmail, setEmployeeEmail] = useState("");
   const [department, setDepartment] = useState("");
   const [date, setDate] = useState(new Date());
@@ -53,32 +41,51 @@ const EmployeeTasksTable = () => {
   const [ticketId, setTicketId] = useState("");
   const [hoursSpent, setHoursSpent] = useState("");
 
+  const [title, titlechange] = useState('Create Task');
+  const [rowperpage, rowperpageChange] = useState(5);
+  const [page, pageChange] = useState(0);
+
+  const [open, setOpen] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [tasks, setTasks] = useState([]);
+  const [deleteTaskId, setDeleteTaskId] = useState(null);
+
   useEffect(() => {
-    const storedTasks = JSON.parse(localStorage.getItem("task") || "[]");
-    setTasks(storedTasks);
+    props.loadTask();
   }, [])
+
+  const clearState = () => {
+    setEmployeeId(0);
+    setEmployeeEmail("");
+    setDepartment("");
+    setDate(new Date());
+    setTask("");
+    setToolOrProject("");
+    setTicketId("");
+    setHoursSpent("");
+  };
 
   const closePopup = () => {
     setOpen(false);
     setOpenDeleteDialog(false);
   };
 
-  const openPopup = () => {
+  const openpopup = () => {
     setOpen(true);
+    clearState();
+    dispatch(OpenPopup())
   };
 
   const addNewTaskDialog = () => {
-    openPopup();
+    titlechange('Create Daily Status');
+    openpopup();
   };
 
   const addNewTask = () => {
 
-    // Generate a unique ID using timestamp and a random number
-    const uniqueId = Date.now() + Math.random().toString(36).substr(2, 9);
-
     // Create an object containing all the details entered in the form fields
     const newTask = {
-      id: uniqueId,
+      id: id,
       employeeId: employeeId,
       employeeEmail: employeeEmail,
       department: department,
@@ -88,26 +95,13 @@ const EmployeeTasksTable = () => {
       ticketId: ticketId,
       hoursSpent: hoursSpent
     };
+    console.log('newTask : ', newTask);
 
-    // Store the task in LocalStorage
-    const updatedTasks = [...tasks, newTask];
-    localStorage.setItem("task", JSON.stringify(updatedTasks));
-    setTasks(updatedTasks);
-
-    console.log('Tasks : ', updatedTasks);
-
-    toast.success("Daily Status Created Successfully!", {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
+    dispatch(CreateTask(newTask));
     closePopup();
   };
 
+  // Function to format the date string
   const formatDate = (dateString) => {
     try {
       const date = new Date(dateString);
@@ -138,10 +132,10 @@ const EmployeeTasksTable = () => {
   const confirmDelete = () => {
     // Filter out the task with the specified taskId
     const updatedTasks = tasks.filter((task) => task.id !== deleteTaskId);
-    
+
     // Update localStorage
     localStorage.setItem("task", JSON.stringify(updatedTasks));
-    
+
     // Update state with the filtered tasks array
     setTasks(updatedTasks);
 
@@ -150,31 +144,21 @@ const EmployeeTasksTable = () => {
 
     // Clear the deleteTaskId state
     setDeleteTaskId(null);
-
-    toast.success("Daily Status Deleted Successfully!", {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
     closePopup();
   };
 
   return (
     <div>
-      <Paper sx={{ margin: "1%" }}>
+      <Paper sx={{ margin: "1%", padding: "1%" }}>
         <div style={{ margin: "1%" }}>
           <Button onClick={addNewTaskDialog} variant="contained" color="primary">
-            Add New (+)
+            Add New
           </Button>
         </div>
         <div style={{ margin: "1%" }}>
           <TableContainer>
             <Table>
-              <TableHead>
+              {/* <TableHead>
                 <TableRow style={{ backgroundColor: "midnightblue" }}>
                   {columns.map(
                     (column) =>
@@ -186,9 +170,22 @@ const EmployeeTasksTable = () => {
                       )
                   )}
                 </TableRow>
+              </TableHead> */}
+              <TableHead>
+                <TableRow style={{ backgroundColor: "midnightblue", color: "white" }}>
+                  <TableCell style={{ color: "white", textAlign: "center" }}>EmployeeId</TableCell>
+                  <TableCell style={{ color: "white" }}>Email</TableCell>
+                  <TableCell style={{ color: "white" }}>Department</TableCell>
+                  <TableCell style={{ color: "white" }}>Date</TableCell>
+                  <TableCell style={{ color: "white" }}>Task</TableCell>
+                  <TableCell style={{ color: "white" }}>Tool/Project</TableCell>
+                  <TableCell style={{ color: "white" }}>TicketId</TableCell>
+                  <TableCell style={{ color: "white", textAlign: "center" }}>HoursSpent</TableCell>
+                  <TableCell style={{ color: "white", textAlign: "center" }}>Action</TableCell>
+                </TableRow>
               </TableHead>
               <TableBody>
-                {tasks.map((task) => (
+                {/* {tasks.map((task) => (
                   <TableRow key={task.id}>
                     {columns.map((column) => {
                       if (column.id !== "id") {
@@ -216,16 +213,49 @@ const EmployeeTasksTable = () => {
                       return null;
                     })}
                   </TableRow>
-                ))}
+                ))} */}
+
+                {props.taskState.taskList &&
+                  props.taskState.taskList.map((row, i) => {
+                    return (
+                      <TableRow key={row.id}>
+                        <TableCell style={{ textAlign: "center" }}>{row.employeeId}</TableCell>
+                        <TableCell>{row.employeeEmail}</TableCell>
+                        <TableCell>{row.department}</TableCell>
+                        <TableCell>{formatDate(row.date)}</TableCell>
+                        <TableCell>{row.task}</TableCell>
+                        <TableCell>{row.toolOrProject}</TableCell>
+                        <TableCell>{row.ticketId}</TableCell>
+                        <TableCell style={{ textAlign: "center" }}>{row.hoursSpent}</TableCell>
+                        <TableCell>
+                          <Stack direction="row" alignItems="center" spacing={1}>
+                            <IconButton aria-label="edit" style={{ color: '#4d94ff' }} size="small" onClick={() => handleEdit(task)}>
+                              <EditIcon fontSize="small" />
+                            </IconButton>
+                            <IconButton aria-label="delete" style={{ color: '#ff3333' }} size="small" onClick={() => handleDelete(task.id)}>
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                          </Stack>
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })}
               </TableBody>
             </Table>
           </TableContainer>
+          {/* <TablePagination
+            rowsPerPageOptions={[5, 10, 15]}
+            rowsPerPage={rowperpage}
+            page={page}
+            count={props.taskState.taskList.length}
+            component={'div'}>
+          </TablePagination> */}
         </div>
       </Paper>
       {/* Create Dialog */}
       <Dialog open={open} onClose={closePopup} fullWidth maxWidth="sm">
         <DialogTitle>
-          <span>Create Daily Status</span>
+          <span>{title}</span>
         </DialogTitle>
         <DialogContent>
           <form>
@@ -341,4 +371,16 @@ const EmployeeTasksTable = () => {
   );
 };
 
-export default EmployeeTasksTable;
+const mapStateToProps = (state) => {
+  return {
+    taskState: state.task
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    loadTask: () => dispatch(GetAllTasks())
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(EmployeeTasksTable);
