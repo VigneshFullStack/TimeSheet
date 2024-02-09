@@ -54,6 +54,15 @@ const EmployeeTasksTable = (props) => {
     props.loadTask();
   }, [])
 
+  const handlePageChange = (event, newpage) => {
+    pageChange(newpage);
+  }
+
+  const handleRowPerPageChange = (event) => {
+    rowperpageChange(+event.target.value);
+    pageChange(0);
+  }
+
   const clearState = () => {
     setEmployeeId(0);
     setEmployeeEmail("");
@@ -216,40 +225,44 @@ const EmployeeTasksTable = (props) => {
                 ))} */}
 
                 {props.taskState.taskList &&
-                  props.taskState.taskList.map((row, i) => {
-                    return (
-                      <TableRow key={row.id}>
-                        <TableCell style={{ textAlign: "center" }}>{row.employeeId}</TableCell>
-                        <TableCell>{row.employeeEmail}</TableCell>
-                        <TableCell>{row.department}</TableCell>
-                        <TableCell>{formatDate(row.date)}</TableCell>
-                        <TableCell>{row.task}</TableCell>
-                        <TableCell>{row.toolOrProject}</TableCell>
-                        <TableCell>{row.ticketId}</TableCell>
-                        <TableCell style={{ textAlign: "center" }}>{row.hoursSpent}</TableCell>
-                        <TableCell>
-                          <Stack direction="row" alignItems="center" spacing={1}>
-                            <IconButton aria-label="edit" style={{ color: '#4d94ff' }} size="small" onClick={() => handleEdit(task)}>
-                              <EditIcon fontSize="small" />
-                            </IconButton>
-                            <IconButton aria-label="delete" style={{ color: '#ff3333' }} size="small" onClick={() => handleDelete(task.id)}>
-                              <DeleteIcon fontSize="small" />
-                            </IconButton>
-                          </Stack>
-                        </TableCell>
-                      </TableRow>
-                    )
-                  })}
+                  props.taskState.taskList
+                    .slice(page * rowperpage, page * rowperpage + rowperpage)
+                    .map((row, i) => {
+                      return (
+                        <TableRow key={row.id}>
+                          <TableCell style={{ textAlign: "center" }}>{row.employeeId}</TableCell>
+                          <TableCell>{row.employeeEmail}</TableCell>
+                          <TableCell>{row.department}</TableCell>
+                          <TableCell>{formatDate(row.date)}</TableCell>
+                          <TableCell>{row.task}</TableCell>
+                          <TableCell>{row.toolOrProject}</TableCell>
+                          <TableCell>{row.ticketId}</TableCell>
+                          <TableCell style={{ textAlign: "center" }}>{row.hoursSpent}</TableCell>
+                          <TableCell>
+                            <Stack direction="row" alignItems="center" spacing={1}>
+                              <IconButton aria-label="edit" style={{ color: '#4d94ff' }} size="small" onClick={() => handleEdit(task)}>
+                                <EditIcon fontSize="small" />
+                              </IconButton>
+                              <IconButton aria-label="delete" style={{ color: '#ff3333' }} size="small" onClick={() => handleDelete(task.id)}>
+                                <DeleteIcon fontSize="small" />
+                              </IconButton>
+                            </Stack>
+                          </TableCell>
+                        </TableRow>
+                      )
+                    })}
               </TableBody>
             </Table>
           </TableContainer>
-          {/* <TablePagination
+          <TablePagination
             rowsPerPageOptions={[5, 10, 15]}
             rowsPerPage={rowperpage}
             page={page}
             count={props.taskState.taskList.length}
-            component={'div'}>
-          </TablePagination> */}
+            component={'div'}
+            onPageChange={handlePageChange}
+            onRowsPerPageChange={handleRowPerPageChange}>
+          </TablePagination>
         </div>
       </Paper>
       {/* Create Dialog */}

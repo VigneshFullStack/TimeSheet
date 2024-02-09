@@ -19,6 +19,11 @@
   width: 100% !important;
 }
 
+.css-pdct74-MuiTablePagination-selectLabel
+, .css-levciy-MuiTablePagination-displayedRows {
+  margin-bottom: 0 !important;
+}
+
 .css-kdc3n8-MuiStack-root {
   justify-content: center;
 }
