@@ -87,6 +87,17 @@
       "toolOrProject": "PressReleases",
       "ticketId": "25",
       "hoursSpent": "8"
+    },
+    {
+      "id": 9,
+      "employeeId": "44",
+      "employeeEmail": "vignesh.venkatesan@euroland.com",
+      "department": ".Net",
+      "date": "2024-02-12T12:37:41.735Z",
+      "task": "Worked on Self Service Portal - IAT",
+      "toolOrProject": "Self Service Portal",
+      "ticketId": "7",
+      "hoursSpent": "8"
     }
   ]
 }

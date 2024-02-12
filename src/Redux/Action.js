@@ -1,4 +1,4 @@
-import { MAKE_REQ, OPEN_POPUP, REQ_ADD_SUCCESS, REQ_GETALL_FAIL, REQ_GETALL_SUCCESS } from "./ActionType"
+import { MAKE_REQ, OPEN_POPUP, REQ_ADD_SUCCESS, REQ_GETALL_FAIL, REQ_GETALL_SUCCESS, REQ_GETTASKBYID_SUCCESS } from "./ActionType"
 
 export const makeRequest = () => {
     return {
@@ -29,6 +29,13 @@ export const OpenPopup = () => {
 export const AddRequest = (data) => {
     return {
         type: REQ_ADD_SUCCESS,
+        payload: data
+    }
+}
+
+export const getTaskByIdSuccess = (data) => {
+    return {
+        type: REQ_GETTASKBYID_SUCCESS,
         payload: data
     }
 }

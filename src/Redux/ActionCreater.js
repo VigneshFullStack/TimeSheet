@@ -1,5 +1,5 @@
 import axios from "axios";
-import { AddRequest, getAllRequestFail, getAllRequestSuccess, makeRequest } from "./Action";
+import { AddRequest, getAllRequestFail, getAllRequestSuccess, getTaskByIdSuccess, makeRequest } from "./Action";
 import { toast } from "react-toastify";
 
 export const GetAllTasks = () => {
@@ -16,6 +16,19 @@ export const GetAllTasks = () => {
     }
 }
 
+export const GetTaskById = (taskId) => {
+    return (dispatch) => {
+        axios.get(`http://localhost:8000/tasks?id=${taskId}`)
+            .then(res => {
+                const taskData = res.data;
+                dispatch(getTaskByIdSuccess(taskData));
+            })
+            .catch(err => {
+                toast.error("Failed to fetch the data : " + err.message);
+            });
+    };
+};
+
 export const CreateTask = (data) => {
     return (dispatch) => {
         axios.post('http://localhost:8000/tasks', data)
@@ -27,3 +40,5 @@ export const CreateTask = (data) => {
             })
     }
 }
+
+

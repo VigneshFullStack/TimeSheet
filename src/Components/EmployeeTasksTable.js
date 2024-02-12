@@ -15,13 +15,14 @@ import { Stack, TablePagination, TextField } from "@mui/material";
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { toast } from 'react-toastify';
 
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { CreateTask, GetAllTasks } from "../Redux/ActionCreater";
-import { connect, useDispatch } from "react-redux";
+import { CreateTask, GetAllTasks, GetTaskById } from "../Redux/ActionCreater";
+import { connect, useDispatch, useSelector } from "react-redux";
 import { OpenPopup } from "../Redux/Action";
 
 const EmployeeTasksTable = (props) => {
@@ -39,14 +40,35 @@ const EmployeeTasksTable = (props) => {
   const [ticketId, setTicketId] = useState("");
   const [hoursSpent, setHoursSpent] = useState("");
 
-  const [title, titlechange] = useState('Create Task');
-  const [rowperpage, rowperpageChange] = useState(5);
+  const [rowperpage, rowperpageChange] = useState(10);
   const [page, pageChange] = useState(0);
+
+  const [title, titleChange] = useState('Create Task');
+  const [btnTitle, btnTitleChange] = useState('Create');
+  const [isEdit, isEditChange] = useState(false);
 
   const [open, setOpen] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [deleteTaskId, setDeleteTaskId] = useState(null);
+
+  const editTaskObj = useSelector((state) => state.task.taskObj);
+
+  useEffect(() => {
+    console.log('editTaskObj : ', editTaskObj)
+    if (Object.keys(editTaskObj).length > 0) {
+      setEmployeeId(editTaskObj[0].employeeId);
+      setEmployeeEmail(editTaskObj[0].employeeEmail);
+      setDepartment(editTaskObj[0].department);
+      setDate(editTaskObj[0].date);
+      setTask(editTaskObj[0].task);
+      setToolOrProject(editTaskObj[0].toolOrProject);
+      setTicketId(editTaskObj[0].ticketId);
+      setHoursSpent(editTaskObj[0].hoursSpent);
+    } else {
+      clearState();
+    }
+  }, [editTaskObj])
 
   useEffect(() => {
     props.loadTask();
@@ -72,6 +94,101 @@ const EmployeeTasksTable = (props) => {
     setHoursSpent("");
   };
 
+  const handleValidation = () => {
+    if (!employeeId) {
+      toast.error('Please fill Employee ID', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      return false;
+    }
+
+    if (!employeeEmail) {
+      toast.error('Please fill Employee Email', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      return false;
+    }
+
+    if (!department) {
+      toast.error('Please fill Department', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      return false;
+    }
+
+    if (!date) {
+      toast.error('Please select a Date', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      return false;
+    }
+
+    if (!task) {
+      toast.error('Please fill Task', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      return false;
+    }
+
+    if (!toolOrProject) {
+      toast.error('Please fill Tool/Project', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      return false;
+    }
+
+    if (!hoursSpent) {
+      toast.error('Please fill Hours Spent', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      return false;
+    }
+
+    return true; // If all validations pass
+  };
+
   const closePopup = () => {
     setOpen(false);
     setOpenDeleteDialog(false);
@@ -84,28 +201,34 @@ const EmployeeTasksTable = (props) => {
   };
 
   const addNewTaskDialog = () => {
-    titlechange('Create Daily Status');
+    isEditChange(false);
+    titleChange('Create Daily Status');
     openpopup();
   };
 
   const addNewTask = () => {
+    toast.dismiss();
 
-    // Create an object containing all the details entered in the form fields
-    const newTask = {
-      id: id,
-      employeeId: employeeId,
-      employeeEmail: employeeEmail,
-      department: department,
-      date: date,
-      task: task,
-      toolOrProject: toolOrProject,
-      ticketId: ticketId,
-      hoursSpent: hoursSpent
-    };
-    console.log('newTask : ', newTask);
+    if (handleValidation()) {
 
-    dispatch(CreateTask(newTask));
-    closePopup();
+      // Create an object containing all the details entered in the form fields
+      const newTask = {
+        id: id,
+        employeeId: employeeId,
+        employeeEmail: employeeEmail,
+        department: department,
+        date: date,
+        task: task,
+        toolOrProject: toolOrProject,
+        ticketId: ticketId,
+        hoursSpent: hoursSpent
+      };
+
+      console.log('newTask : ', newTask);
+
+      dispatch(CreateTask(newTask));
+      closePopup();
+    }
   };
 
   // Function to format the date string
@@ -126,8 +249,12 @@ const EmployeeTasksTable = (props) => {
     }
   };
 
-  const handleEdit = () => {
-    // Implement edit functionality
+  const handleEdit = (taskId) => {
+    isEditChange(true);
+    titleChange("Update Daily Status");
+    btnTitleChange("Update");
+    setOpen(true);
+    dispatch(GetTaskById(taskId));
   };
 
   const handleDelete = (taskId) => {
@@ -167,6 +294,7 @@ const EmployeeTasksTable = (props) => {
             <Table>
               <TableHead>
                 <TableRow style={{ backgroundColor: "midnightblue", color: "white" }}>
+                  <TableCell style={{ color: "white", textAlign: "center" }}>Id</TableCell>
                   <TableCell style={{ color: "white", textAlign: "center" }}>EmployeeId</TableCell>
                   <TableCell style={{ color: "white" }}>Email</TableCell>
                   <TableCell style={{ color: "white" }}>Department</TableCell>
@@ -185,6 +313,7 @@ const EmployeeTasksTable = (props) => {
                     .map((row, i) => {
                       return (
                         <TableRow key={row.id}>
+                          <TableCell style={{ textAlign: "center" }}>{row.id}</TableCell>
                           <TableCell style={{ textAlign: "center" }}>{row.employeeId}</TableCell>
                           <TableCell>{row.employeeEmail}</TableCell>
                           <TableCell>{row.department}</TableCell>
@@ -195,10 +324,10 @@ const EmployeeTasksTable = (props) => {
                           <TableCell style={{ textAlign: "center" }}>{row.hoursSpent}</TableCell>
                           <TableCell>
                             <Stack direction="row" alignItems="center" spacing={1}>
-                              <IconButton aria-label="edit" style={{ color: '#4d94ff' }} size="small" onClick={() => handleEdit(task)}>
+                              <IconButton aria-label="edit" style={{ color: '#4d94ff' }} size="small" onClick={() => handleEdit(row.id)}>
                                 <EditIcon fontSize="small" />
                               </IconButton>
-                              <IconButton aria-label="delete" style={{ color: '#ff3333' }} size="small" onClick={() => handleDelete(task.id)}>
+                              <IconButton aria-label="delete" style={{ color: '#ff3333' }} size="small" onClick={() => handleDelete(row.id)}>
                                 <DeleteIcon fontSize="small" />
                               </IconButton>
                             </Stack>
@@ -315,7 +444,7 @@ const EmployeeTasksTable = (props) => {
             Cancel
           </Button>
           <Button onClick={addNewTask} variant="contained" color="primary" autoFocus>
-            Create
+            {btnTitle}
           </Button>
         </DialogActions>
       </Dialog>
