@@ -15,15 +15,18 @@ import { Stack, TablePagination, TextField } from "@mui/material";
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import { toast } from 'react-toastify';
 
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { CreateTask, GetAllTasks, GetTaskById } from "../Redux/ActionCreater";
+import { CreateTask, DeleteTask, GetAllTasks, GetTaskById, UpdateTask } from "../Redux/ActionCreater";
 import { connect, useDispatch, useSelector } from "react-redux";
 import { OpenPopup } from "../Redux/Action";
+
+import * as XLSX from 'xlsx';
 
 const EmployeeTasksTable = (props) => {
 
@@ -49,22 +52,19 @@ const EmployeeTasksTable = (props) => {
 
   const [open, setOpen] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [tasks, setTasks] = useState([]);
-  const [deleteTaskId, setDeleteTaskId] = useState(null);
 
   const editTaskObj = useSelector((state) => state.task.taskObj);
 
   useEffect(() => {
-    console.log('editTaskObj : ', editTaskObj)
     if (Object.keys(editTaskObj).length > 0) {
-      setEmployeeId(editTaskObj[0].employeeId);
-      setEmployeeEmail(editTaskObj[0].employeeEmail);
-      setDepartment(editTaskObj[0].department);
-      setDate(editTaskObj[0].date);
-      setTask(editTaskObj[0].task);
-      setToolOrProject(editTaskObj[0].toolOrProject);
-      setTicketId(editTaskObj[0].ticketId);
-      setHoursSpent(editTaskObj[0].hoursSpent);
+      setEmployeeId(editTaskObj.employeeId);
+      setEmployeeEmail(editTaskObj.employeeEmail);
+      setDepartment(editTaskObj.department);
+      setDate(editTaskObj.date);
+      setTask(editTaskObj.task);
+      setToolOrProject(editTaskObj.toolOrProject);
+      setTicketId(editTaskObj.ticketId);
+      setHoursSpent(editTaskObj.hoursSpent);
     } else {
       clearState();
     }
@@ -73,6 +73,54 @@ const EmployeeTasksTable = (props) => {
   useEffect(() => {
     props.loadTask();
   }, [])
+
+  const exportToExcel = () => {
+    // Define column headers with modified names
+    const headers = [
+      'EmployeeId',
+      'EmployeeEmail',
+      'Department',
+      'Date',
+      'Task',
+      'Tool/Project',
+      'TicketId',
+      'HoursSpent'
+    ];
+
+    // Convert date strings to formatted date strings (dd-mm-yyyy)
+    const formattedData = props.taskState.taskList.map(obj => {
+      const date = new Date(obj.date);
+      const formattedDate = `${('0' + date.getDate()).slice(-2)}-${('0' + (date.getMonth() + 1)).slice(-2)}-${date.getFullYear()}`;
+      return { ...obj, date: formattedDate };
+    });
+
+    // Map data to corresponding headers
+    const mappedData = formattedData.map(obj => ({
+      EmployeeId: obj.employeeId,
+      EmployeeEmail: obj.employeeEmail,
+      Department: obj.department,
+      Date: obj.date,
+      Task: obj.task,
+      'Tool/Project': obj.toolOrProject,
+      TicketId: obj.ticketId,
+      HoursSpent: obj.hoursSpent
+    }));
+
+    // Convert data to array of arrays (2D array) with headers as first row
+    const dataArray = [headers, ...mappedData.map(obj => headers.map(header => obj[header]))];
+
+    // Create a new workbook
+    const wb = XLSX.utils.book_new();
+
+    // Convert data array to worksheet
+    const ws = XLSX.utils.aoa_to_sheet(dataArray);
+
+    // Add worksheet to workbook
+    XLSX.utils.book_append_sheet(wb, ws, 'Tasks');
+
+    // Write the workbook to a file
+    XLSX.writeFile(wb, 'task_list.xlsx');
+  };
 
   const handlePageChange = (event, newpage) => {
     pageChange(newpage);
@@ -202,6 +250,7 @@ const EmployeeTasksTable = (props) => {
 
   const addNewTaskDialog = () => {
     isEditChange(false);
+    btnTitleChange('Create')
     titleChange('Create Daily Status');
     openpopup();
   };
@@ -213,7 +262,7 @@ const EmployeeTasksTable = (props) => {
 
       // Create an object containing all the details entered in the form fields
       const newTask = {
-        id: id,
+        id: editTaskObj.id,
         employeeId: employeeId,
         employeeEmail: employeeEmail,
         department: department,
@@ -224,9 +273,12 @@ const EmployeeTasksTable = (props) => {
         hoursSpent: hoursSpent
       };
 
-      console.log('newTask : ', newTask);
+      if (isEdit) {
+        dispatch(UpdateTask(newTask));
+      } else {
+        dispatch(CreateTask(newTask));
+      }
 
-      dispatch(CreateTask(newTask));
       closePopup();
     }
   };
@@ -258,35 +310,29 @@ const EmployeeTasksTable = (props) => {
   };
 
   const handleDelete = (taskId) => {
-    // Set the taskId to delete and open the confirmation dialog
-    setDeleteTaskId(taskId);
+    setId(taskId);
     setOpenDeleteDialog(true);
   };
 
   const confirmDelete = () => {
-    // Filter out the task with the specified taskId
-    const updatedTasks = tasks.filter((task) => task.id !== deleteTaskId);
-
-    // Update localStorage
-    localStorage.setItem("task", JSON.stringify(updatedTasks));
-
-    // Update state with the filtered tasks array
-    setTasks(updatedTasks);
-
-    // Close the confirmation dialog
+    dispatch(DeleteTask(id));
     setOpenDeleteDialog(false);
-
-    // Clear the deleteTaskId state
-    setDeleteTaskId(null);
     closePopup();
   };
 
   return (
     <div>
       <Paper sx={{ margin: "1%", padding: "1%" }}>
-        <div style={{ margin: "1%" }}>
+        <div style={{ margin: "1%", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Button onClick={addNewTaskDialog} variant="contained" color="primary">
             Add New
+          </Button>
+
+          {/* <button onClick={exportExcel} disabled={isLoading}>
+            {isLoading ? 'Downloading...' : 'Download as Excel'}
+          </button> */}
+          <Button onClick={exportToExcel} variant="outlined" startIcon={<CloudDownloadIcon />}>
+            Download as Excel
           </Button>
         </div>
         <div style={{ margin: "1%" }}>
@@ -348,9 +394,9 @@ const EmployeeTasksTable = (props) => {
             onRowsPerPageChange={handleRowPerPageChange}>
           </TablePagination>
         </div>
-      </Paper>
-      {/* Create Dialog */}
-      <Dialog open={open} onClose={closePopup} fullWidth maxWidth="sm">
+      </Paper >
+      {/* Create and Update Dialog */}
+      <Dialog Dialog open={open} onClose={closePopup} fullWidth maxWidth="sm" >
         <DialogTitle>
           <span>{title}</span>
         </DialogTitle>
@@ -443,14 +489,14 @@ const EmployeeTasksTable = (props) => {
           <Button onClick={closePopup} variant="contained" color="error">
             Cancel
           </Button>
-          <Button onClick={addNewTask} variant="contained" color="primary" autoFocus>
+          <Button onClick={addNewTask} className="save-btn" variant="contained" color="primary" autoFocus>
             {btnTitle}
           </Button>
         </DialogActions>
-      </Dialog>
+      </Dialog >
 
       {/* Delete Confirmation Dialog */}
-      <Dialog open={openDeleteDialog} onClose={closePopup}>
+      <Dialog Dialog open={openDeleteDialog} onClose={closePopup} >
         <DialogTitle>Confirm Delete</DialogTitle>
         <DialogContent>
           Are you sure you want to delete this task?
@@ -463,8 +509,8 @@ const EmployeeTasksTable = (props) => {
             Confirm
           </Button>
         </DialogActions>
-      </Dialog>
-    </div>
+      </Dialog >
+    </div >
   );
 };
 

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { AddRequest, getAllRequestFail, getAllRequestSuccess, getTaskByIdSuccess, makeRequest } from "./Action";
+import { AddRequest, getAllRequestFail, getAllRequestSuccess, getTaskByIdSuccess, makeRequest, UpdateRequest } from "./Action";
 import { toast } from "react-toastify";
 
 export const GetAllTasks = () => {
@@ -20,7 +20,7 @@ export const GetTaskById = (taskId) => {
     return (dispatch) => {
         axios.get(`http://localhost:8000/tasks?id=${taskId}`)
             .then(res => {
-                const taskData = res.data;
+                const taskData = res.data[0];
                 dispatch(getTaskByIdSuccess(taskData));
             })
             .catch(err => {
@@ -34,11 +34,36 @@ export const CreateTask = (data) => {
         axios.post('http://localhost:8000/tasks', data)
             .then(res => {
                 dispatch(AddRequest(data));
-                toast.success("Task Created Successfully!")
-            }).catch(err => {
-                toast.error("Failed to Create Task due to : " + err.message)
+                toast.success("Task Created Successfully!");
+            })
+            .catch(err => {
+                toast.error("Failed to Create Task due to : " + err.message);
             })
     }
 }
 
+export const UpdateTask = (data) => {
+    return (dispatch) => {
+        axios.put(`http://localhost:8000/tasks?id=${data.id}`, data)
+            .then(res => {
+                dispatch(UpdateRequest(data));
+                toast.success("Task Updated Successfully!");
+            })
+            .catch(err => {
+                toast.error("Failed to Update Task due to : " + err.message);
+            })
+    }
+}
 
+export const DeleteTask = (taskId) => {
+    return (dispatch) => {
+        axios.delete(`http://localhost:8000/tasks?id=${taskId}`)
+            .then(res => {
+                dispatch(DeleteTask(taskId));
+                toast.success("Task Deleted Successfully!");
+            })
+            .catch(err => {
+                toast.error("Failed to Delete Task due to : " + err.message);
+            })
+    }
+}

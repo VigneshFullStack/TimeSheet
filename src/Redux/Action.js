@@ -1,4 +1,4 @@
-import { MAKE_REQ, OPEN_POPUP, REQ_ADD_SUCCESS, REQ_GETALL_FAIL, REQ_GETALL_SUCCESS, REQ_GETTASKBYID_SUCCESS } from "./ActionType"
+import { MAKE_REQ, OPEN_POPUP, REQ_ADD_SUCCESS, REQ_DELETE_SUCCESS, REQ_GETALL_FAIL, REQ_GETALL_SUCCESS, REQ_GETTASKBYID_SUCCESS, REQ_UPDATE_SUCCESS } from "./ActionType"
 
 export const makeRequest = () => {
     return {
@@ -37,5 +37,19 @@ export const getTaskByIdSuccess = (data) => {
     return {
         type: REQ_GETTASKBYID_SUCCESS,
         payload: data
+    }
+}
+
+export const UpdateRequest = (data) => {
+    return {
+        type: REQ_UPDATE_SUCCESS,
+        payload: data
+    }
+}
+
+export const DeleteRequest = (taskId) => {
+    return {
+        type: REQ_DELETE_SUCCESS,
+        payload: taskId
     }
 }

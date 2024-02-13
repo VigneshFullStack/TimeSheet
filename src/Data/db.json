@@ -98,6 +98,17 @@
       "toolOrProject": "Self Service Portal",
       "ticketId": "7",
       "hoursSpent": "8"
+    },
+    {
+      "id": 10,
+      "employeeId": "44",
+      "employeeEmail": "vignesh.venkatesan@euroland.com",
+      "department": ".Net",
+      "date": "2024-02-13T05:14:46.852Z",
+      "task": "Worked on Market Overview",
+      "toolOrProject": "Market Overview",
+      "ticketId": "13",
+      "hoursSpent": "8"
     }
   ]
 }

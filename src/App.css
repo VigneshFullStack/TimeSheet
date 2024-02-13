@@ -12,11 +12,15 @@
   align-items: center;
   min-height: 100vh;
   background: #1f293a;
-  /* background-image: url(./bg.jpg); */
 }
 
 .MuiFormControl-root {
   width: 100% !important;
+}
+
+.save-btn {
+  margin-left: 20px !important;
+  margin-right: 5% !important;
 }
 
 .css-pdct74-MuiTablePagination-selectLabel
