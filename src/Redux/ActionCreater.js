@@ -1,5 +1,5 @@
 import axios from "axios";
-import { AddRequest, getAllRequestFail, getAllRequestSuccess, getTaskByIdSuccess, makeRequest, UpdateRequest } from "./Action";
+import { AddRequest, getAllRequestFail, getAllRequestSuccess, getTaskByIdSuccess, makeRequest, UpdateRequest, DeleteRequest } from "./Action";
 import { toast } from "react-toastify";
 
 export const GetAllTasks = () => {
@@ -32,9 +32,18 @@ export const GetTaskById = (taskId) => {
 export const CreateTask = (data) => {
     return (dispatch) => {
         axios.post('http://localhost:8000/tasks', data)
-            .then(res => {
+            .then((res) => {
                 dispatch(AddRequest(data));
-                toast.success("Task Created Successfully!");
+                toast.dismiss();
+                toast.success("Task Created Successfully!", {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
             })
             .catch(err => {
                 toast.error("Failed to Create Task due to : " + err.message);
@@ -44,10 +53,19 @@ export const CreateTask = (data) => {
 
 export const UpdateTask = (data) => {
     return (dispatch) => {
-        axios.put(`http://localhost:8000/tasks?id=${data.id}`, data)
-            .then(res => {
+        axios.post(`http://localhost:8000/tasks?id=${data.id}`, data)
+            .then((res) => {
                 dispatch(UpdateRequest(data));
-                toast.success("Task Updated Successfully!");
+                toast.dismiss();
+                toast.success("Task Updated Successfully!", {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
             })
             .catch(err => {
                 toast.error("Failed to Update Task due to : " + err.message);
@@ -57,10 +75,19 @@ export const UpdateTask = (data) => {
 
 export const DeleteTask = (taskId) => {
     return (dispatch) => {
-        axios.delete(`http://localhost:8000/tasks?id=${taskId}`)
-            .then(res => {
-                dispatch(DeleteTask(taskId));
-                toast.success("Task Deleted Successfully!");
+        axios.delete(`http://localhost:8000/tasks/${taskId}`)
+            .then((res) => {
+                dispatch(DeleteRequest(taskId));
+                toast.dismiss();
+                toast.success("Task Deleted Successfully!", {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
             })
             .catch(err => {
                 toast.error("Failed to Delete Task due to : " + err.message);

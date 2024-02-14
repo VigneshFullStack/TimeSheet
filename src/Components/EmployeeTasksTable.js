@@ -34,7 +34,7 @@ const EmployeeTasksTable = (props) => {
 
   // State variables for each property
   const [id, setId] = useState(0);
-  const [employeeId, setEmployeeId] = useState(0);
+  const [employeeId, setEmployeeId] = useState("");
   const [employeeEmail, setEmployeeEmail] = useState("");
   const [department, setDepartment] = useState("");
   const [date, setDate] = useState(new Date());
@@ -60,7 +60,7 @@ const EmployeeTasksTable = (props) => {
       setEmployeeId(editTaskObj.employeeId);
       setEmployeeEmail(editTaskObj.employeeEmail);
       setDepartment(editTaskObj.department);
-      setDate(editTaskObj.date);
+      setDate(new Date(editTaskObj.date));
       setTask(editTaskObj.task);
       setToolOrProject(editTaskObj.toolOrProject);
       setTicketId(editTaskObj.ticketId);
@@ -132,7 +132,7 @@ const EmployeeTasksTable = (props) => {
   }
 
   const clearState = () => {
-    setEmployeeId(0);
+    setEmployeeId("");
     setEmployeeEmail("");
     setDepartment("");
     setDate(new Date());
@@ -266,7 +266,7 @@ const EmployeeTasksTable = (props) => {
         employeeId: employeeId,
         employeeEmail: employeeEmail,
         department: department,
-        date: date,
+        date: new Date(date),
         task: task,
         toolOrProject: toolOrProject,
         ticketId: ticketId,
@@ -321,8 +321,17 @@ const EmployeeTasksTable = (props) => {
   };
 
   return (
-    <div>
+    <div className="container">
       <Paper sx={{ margin: "1%", padding: "1%" }}>
+        <div style={{ margin: "1%", display: "flex", justifyContent: "center", alignItems: "center" }}>
+          <img src="/Assets/Images/my-profile.jpg" className="profile-img" alt="profile-image" />
+          <div className="ms-4">
+            <h5 className="fw-normal text-secondary"><span className="fw-semibold profile-label">Name</span> : <span className="ms-3">VIGNESH VENKATESAN</span></h5>
+            <h5 className="fw-normal text-secondary"><span className="fw-semibold profile-label">Email</span> : <span className="ms-3">vignesh.venkatesan@euroland.com</span></h5>
+            <h5 className="fw-normal text-secondary"><span className="fw-semibold profile-label">Team</span> : <span className="ms-3">.Net</span></h5>
+            <h5 className="fw-normal text-secondary"><span className="fw-semibold profile-label">Role</span> : <span className="ms-3">Software Developer</span></h5>
+          </div>
+        </div>
         <div style={{ margin: "1%", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Button onClick={addNewTaskDialog} variant="contained" color="primary">
             Add New
@@ -340,11 +349,11 @@ const EmployeeTasksTable = (props) => {
             <Table>
               <TableHead>
                 <TableRow style={{ backgroundColor: "midnightblue", color: "white" }}>
-                  <TableCell style={{ color: "white", textAlign: "center" }}>Id</TableCell>
-                  <TableCell style={{ color: "white", textAlign: "center" }}>EmployeeId</TableCell>
-                  <TableCell style={{ color: "white" }}>Email</TableCell>
+                  {/* <TableCell style={{ color: "white", textAlign: "center" }}>Id</TableCell> */}
+                  {/* <TableCell style={{ color: "white", textAlign: "center" }}>EmployeeId</TableCell> */}
+                  {/* <TableCell style={{ color: "white" }}>Email</TableCell> */}
+                  <TableCell style={{ color: "white", width: "110px" }}>Date</TableCell>
                   <TableCell style={{ color: "white" }}>Department</TableCell>
-                  <TableCell style={{ color: "white" }}>Date</TableCell>
                   <TableCell style={{ color: "white" }}>Task</TableCell>
                   <TableCell style={{ color: "white" }}>Tool/Project</TableCell>
                   <TableCell style={{ color: "white" }}>TicketId</TableCell>
@@ -353,34 +362,39 @@ const EmployeeTasksTable = (props) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {props.taskState.taskList &&
-                  props.taskState.taskList
+                {props.taskState.taskList && props.taskState.taskList.length > 0 ?
+                  (props.taskState.taskList
                     .slice(page * rowperpage, page * rowperpage + rowperpage)
-                    .map((row, i) => {
-                      return (
-                        <TableRow key={row.id}>
-                          <TableCell style={{ textAlign: "center" }}>{row.id}</TableCell>
-                          <TableCell style={{ textAlign: "center" }}>{row.employeeId}</TableCell>
-                          <TableCell>{row.employeeEmail}</TableCell>
-                          <TableCell>{row.department}</TableCell>
-                          <TableCell>{formatDate(row.date)}</TableCell>
-                          <TableCell>{row.task}</TableCell>
-                          <TableCell>{row.toolOrProject}</TableCell>
-                          <TableCell>{row.ticketId}</TableCell>
-                          <TableCell style={{ textAlign: "center" }}>{row.hoursSpent}</TableCell>
-                          <TableCell>
-                            <Stack direction="row" alignItems="center" spacing={1}>
-                              <IconButton aria-label="edit" style={{ color: '#4d94ff' }} size="small" onClick={() => handleEdit(row.id)}>
-                                <EditIcon fontSize="small" />
-                              </IconButton>
-                              <IconButton aria-label="delete" style={{ color: '#ff3333' }} size="small" onClick={() => handleDelete(row.id)}>
-                                <DeleteIcon fontSize="small" />
-                              </IconButton>
-                            </Stack>
-                          </TableCell>
-                        </TableRow>
-                      )
-                    })}
+                    .map((row, i) => (
+                      <TableRow key={row.id}>
+                        {/* <TableCell style={{ textAlign: "center" }}>{row.id}</TableCell> */}
+                        {/* <TableCell style={{ textAlign: "center" }}>{row.employeeId}</TableCell> */}
+                        {/* <TableCell>{row.employeeEmail}</TableCell> */}
+                        <TableCell style={{ width: "110px" }}>{formatDate(row.date)}</TableCell>
+                        <TableCell>{row.department}</TableCell>
+                        <TableCell>{row.task}</TableCell>
+                        <TableCell>{row.toolOrProject}</TableCell>
+                        <TableCell>{row.ticketId}</TableCell>
+                        <TableCell style={{ textAlign: "center" }}>{row.hoursSpent}</TableCell>
+                        <TableCell>
+                          <Stack direction="row" alignItems="center" spacing={1}>
+                            <IconButton aria-label="edit" style={{ color: '#4d94ff' }} size="small" onClick={() => handleEdit(row.id)}>
+                              <EditIcon fontSize="small" />
+                            </IconButton>
+                            <IconButton aria-label="delete" style={{ color: '#ff3333' }} size="small" onClick={() => handleDelete(row.id)}>
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                          </Stack>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={10} align="center">
+                        No Records Found..!
+                      </TableCell>
+                    </TableRow>
+                  )}
               </TableBody>
             </Table>
           </TableContainer>

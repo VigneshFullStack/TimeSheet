@@ -23,6 +23,16 @@
   margin-right: 5% !important;
 }
 
+.profile-img {
+  border-radius: 50%;
+  height: 150px;
+}
+
+.profile-label {
+  display: inline-block !important;
+  width: 80px;
+}
+
 .css-pdct74-MuiTablePagination-selectLabel
 , .css-levciy-MuiTablePagination-displayedRows {
   margin-bottom: 0 !important;
